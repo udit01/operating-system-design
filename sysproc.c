@@ -89,3 +89,20 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int
+sys_trace(void)
+{
+  int x;
+  if(argint(0, &x) < 0){
+    return -1;
+  }
+  struct proc *currentProc = myproc();
+  if(x == 0){
+    currentProc->printSysCallTrace = 0;
+  }
+  else{
+    currentProc->printSysCallTrace = 1;
+  }
+  return currentProc->sysCallsCount;
+}

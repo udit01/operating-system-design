@@ -103,6 +103,7 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
+extern int sys_trace(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -126,6 +127,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_trace]   sys_trace,
 };
 
 static char* syscallnames[] = {
@@ -150,6 +152,7 @@ static char* syscallnames[] = {
 [SYS_link]    "link",
 [SYS_mkdir]   "mkdir",
 [SYS_close]   "close",
+[SYS_trace]   "trace",
 };
 
 void
@@ -160,9 +163,22 @@ syscall(void)
 
   num = curproc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    uint returnValue = curproc->tf->eax = syscalls[num]();
+    
+    if(curproc->printSysCallTrace == 1){
+      if (num == 16) {
+        cprintf("\n");
+      }
+       cprintf("pid: %d [%s] syscall(%d=%s)\n",
+	       curproc->pid, curproc->name, num, syscallnames[num]);
+      
+    }
+    
+    curproc->sysCallsCount++;
+    
+    curproc->tf->eax = syscalls[num]();
+    // uint returnValue = curproc->tf->eax = syscalls[num]();
     // print the system call name and count number of times ? Print all at the end of the process does process call exit at the end?
-    cprintf("System call : %s was called and returned : %d\n", syscallnames[num], returnValue);
+    // cprintf("System call : %s was called and returned : %d\n", syscallnames[num], returnValue);
 
   } else {
     cprintf("%d %s: unknown sys call %d\n",

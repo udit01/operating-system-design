@@ -112,6 +112,10 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  //ADDED
+  p->printSysCallTrace = 0;
+  p->sysCallsCount = 0;
+
   return p;
 }
 
