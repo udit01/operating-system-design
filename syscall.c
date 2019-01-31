@@ -104,6 +104,8 @@ extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_toggle(void);
+extern int sys_add(void);
+extern int sys_ps(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -128,7 +130,8 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_toggle]  sys_toggle,
-
+[SYS_add]     sys_add,
+[SYS_ps]      sys_ps,
 };
 
 static char* syscallnames[] = {
@@ -154,6 +157,8 @@ static char* syscallnames[] = {
 [SYS_mkdir]   "sys_mkdir",
 [SYS_close]   "sys_close",  
 [SYS_toggle]  "sys_toggle",
+[SYS_add]     "sys_add",
+[SYS_ps]      "sys_ps",
 };
 int printCall=1;
 int countCall=0;
@@ -168,7 +173,9 @@ syscall(void)
     if (printCall == 1) {
       cprintf("%s %d\n", syscallnames[num], countCall);
     }
+
     countCall++;
+    // PROBLEM at call 23 because prototype doesn't match..?
     curproc->tf->eax = syscalls[num]();
     // print the system call name and count number of times ? Print all at the end of the process does process call exit at the end?
     

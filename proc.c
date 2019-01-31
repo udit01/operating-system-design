@@ -532,3 +532,27 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+void
+list_running(void)
+{
+
+  struct proc *p;
+
+  acquire(&ptable.lock);
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if (p->state != UNUSED) {
+      cprintf("Pid : %d\tMemSize : %d\tKilled  : %d\tState : %s\n", p->pid, p->sz, p->killed, p->state);
+      cprintf("Name : ");
+      for(int i = 0; i < 16; i++)
+      {
+        cprintf("%c", p->name[i]);
+      }
+      cprintf("\n-----------\n");
+    }
+  }
+
+  release(&ptable.lock);
+
+}

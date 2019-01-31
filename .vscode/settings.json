@@ -2,6 +2,12 @@
     "files.associations": {
         "user.h": "c",
         "types.h": "c",
-        "date.h": "c"
+        "date.h": "c",
+        "proc.h": "c",
+        "mmu.h": "c",
+        "memlayout.h": "c",
+        "param.h": "c",
+        "defs.h": "c",
+        "x86.h": "c"
     }
 }

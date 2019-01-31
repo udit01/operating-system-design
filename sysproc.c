@@ -89,3 +89,19 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int 
+sys_add(void)
+{
+  // int x, y;
+  //  return ;
+  return 0;
+}
+
+void list_running(void);
+int 
+sys_ps(void)
+{
+  list_running();
+  return 0;
+}
