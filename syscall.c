@@ -129,29 +129,30 @@ static int (*syscalls[])(void) = {
 };
 
 static char* syscallnames[] = {
-[SYS_fork]    "fork",
-[SYS_exit]    "exit",
-[SYS_wait]    "wait",
-[SYS_pipe]    "pipe",
-[SYS_read]    "read",
-[SYS_kill]    "kill",
-[SYS_exec]    "exec",
-[SYS_fstat]   "fstat",
-[SYS_chdir]   "chdir",
-[SYS_dup]     "dup",
-[SYS_getpid]  "getpid",
-[SYS_sbrk]    "sbrk",
-[SYS_sleep]   "sleep",
-[SYS_uptime]  "uptime",
-[SYS_open]    "open",
-[SYS_write]   "write",
-[SYS_mknod]   "mknod",
-[SYS_unlink]  "unlink",
-[SYS_link]    "link",
-[SYS_mkdir]   "mkdir",
-[SYS_close]   "close",
+[SYS_fork]    "sys_fork",
+[SYS_exit]    "sys_exit",
+[SYS_wait]    "sys_wait",
+[SYS_pipe]    "sys_pipe",
+[SYS_read]    "sys_read",
+[SYS_kill]    "sys_kill",
+[SYS_exec]    "sys_exec",
+[SYS_fstat]   "sys_fstat",
+[SYS_chdir]   "sys_chdir",
+[SYS_dup]     "sys_dup",
+[SYS_getpid]  "sys_getpid",
+[SYS_sbrk]    "sys_sbrk",
+[SYS_sleep]   "sys_sleep",
+[SYS_uptime]  "sys_uptime",
+[SYS_open]    "sys_open",
+[SYS_write]   "sys_write",
+[SYS_mknod]   "sys_mknod",
+[SYS_unlink]  "sys_unlink",
+[SYS_link]    "sys_link",
+[SYS_mkdir]   "sys_mkdir",
+[SYS_close]   "sys_close",
 };
-
+int printCall=1;
+int countCall=0;
 void
 syscall(void)
 {
@@ -160,9 +161,13 @@ syscall(void)
 
   num = curproc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    uint returnValue = curproc->tf->eax = syscalls[num]();
+    if (printCall == 1) {
+      cprintf("%s %d\n", syscallnames[num], countCall);
+    }
+    countCall++;
+    curproc->tf->eax = syscalls[num]();
     // print the system call name and count number of times ? Print all at the end of the process does process call exit at the end?
-    cprintf("System call : %s was called and returned : %d\n", syscallnames[num], returnValue);
+    
 
   } else {
     cprintf("%d %s: unknown sys call %d\n",
