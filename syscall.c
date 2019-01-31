@@ -103,6 +103,7 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
+extern int sys_toggle(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -126,6 +127,8 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_toggle]  sys_toggle,
+
 };
 
 static char* syscallnames[] = {
@@ -149,7 +152,8 @@ static char* syscallnames[] = {
 [SYS_unlink]  "sys_unlink",
 [SYS_link]    "sys_link",
 [SYS_mkdir]   "sys_mkdir",
-[SYS_close]   "sys_close",
+[SYS_close]   "sys_close",  
+[SYS_toggle]  "sys_toggle",
 };
 int printCall=1;
 int countCall=0;
@@ -174,4 +178,12 @@ syscall(void)
             curproc->pid, curproc->name, num);
     curproc->tf->eax = -1;
   }
+}
+
+int 
+sys_toggle(void)
+{
+  
+  printCall = 1 - printCall;
+  return 0;
 }
