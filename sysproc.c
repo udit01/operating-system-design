@@ -91,11 +91,12 @@ sys_uptime(void)
 }
 
 int 
-sys_add(void)
+sys_add(int x, int y)
 {
-  // int x, y;
+  argint(0,&x);
+  argint(1,&y);
   //  return ;
-  return 0;
+  return x+y;
 }
 
 void list_running(void);

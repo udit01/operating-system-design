@@ -160,8 +160,10 @@ static char* syscallnames[] = {
 [SYS_add]     "sys_add",
 [SYS_ps]      "sys_ps",
 };
+
 int printCall=1;
 int countCall=0;
+
 void
 syscall(void)
 {
@@ -178,8 +180,6 @@ syscall(void)
     // PROBLEM at call 23 because prototype doesn't match..?
     curproc->tf->eax = syscalls[num]();
     // print the system call name and count number of times ? Print all at the end of the process does process call exit at the end?
-    
-
   } else {
     cprintf("%d %s: unknown sys call %d\n",
             curproc->pid, curproc->name, num);
@@ -190,7 +190,6 @@ syscall(void)
 int 
 sys_toggle(void)
 {
-  
   printCall = 1 - printCall;
   return 0;
 }
