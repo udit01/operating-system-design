@@ -17,15 +17,14 @@ int main()
 	// starting the trace : 1
 	trace(1);
 	
-	// 4 sys calls
+	// 3 sys calls
 	fork();
 	fork();
-	wait();
 	wait();
 	
 	// 1 sys call
 	if(getpid() == pid){
-		// 10 (include trace(0))	
+		// 9 (include trace(0))	
 		printf(1, "total syscalls so far: %d\n", trace(0)); 
 		// 26 more from print (2 digits for num)
 	}
@@ -36,7 +35,7 @@ int main()
 	
 	// 1 
 	if(getpid() == pid){
-		// 40 (39 + trace(0))
+		// 39 (38 + trace(0))
 		printf(1, "totalsys calls so far: %d\n", trace(0)); 
 	}
 	exit();
