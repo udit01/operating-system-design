@@ -539,17 +539,19 @@ list_running(void)
 
   struct proc *p;
 
+  const char* stateNames[] = {"UNUSED\0", "EMBRYO\0", "SLEEPING\0", "RUNNABLE\0", "RUNNING\0", "ZOMBIE\0" };
+
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if (p->state != UNUSED) {
-      cprintf("Pid : %d\tMemSize : %d\tKilled  : %d\tState : %s\n", p->pid, p->sz, p->killed, p->state);
+      cprintf("Pid : %d   MemSize : %d   Killed  : %d   State : %s\n", p->pid, p->sz, p->killed, stateNames[p->state]);
       cprintf("Name : ");
-      for(int i = 0; i < 16; i++)
-      {
-        cprintf("%c", p->name[i]);
-      }
-      cprintf("\n-----------\n");
+      // for(int i = 0; i < 16; i++)
+      // {
+      //   cprintf("%c", p->name[i]);
+      // }
+      cprintf("%s\n-----------\n", p->name);
     }
   }
 
