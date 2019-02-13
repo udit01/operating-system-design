@@ -546,12 +546,12 @@ list_running(void)
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if (p->state != UNUSED) {
       cprintf("Pid : %d   MemSize : %d   Killed  : %d   State : %s\n", p->pid, p->sz, p->killed, stateNames[p->state]);
-      cprintf("Name : ");
+      // cprintf("Name : ");
       // for(int i = 0; i < 16; i++)
       // {
       //   cprintf("%c", p->name[i]);
       // }
-      cprintf("%s\n-----------\n", p->name);
+      cprintf("Name : %s\n-----------\n", p->name);
     }
   }
 

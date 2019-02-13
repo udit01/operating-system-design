@@ -106,3 +106,11 @@ sys_ps(void)
   list_running();
   return 0;
 }
+
+// int
+// sys_send(int sender_pid, int rec_pid, void* msg)
+// {
+//   argint(0,&x);
+//   argint(1,&y);
+//   argptr()
+// }
