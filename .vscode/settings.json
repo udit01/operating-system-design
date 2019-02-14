@@ -8,6 +8,7 @@
         "memlayout.h": "c",
         "param.h": "c",
         "defs.h": "c",
-        "x86.h": "c"
+        "x86.h": "c",
+        "traps.h": "c"
     }
 }

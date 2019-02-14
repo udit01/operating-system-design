@@ -107,10 +107,21 @@ sys_ps(void)
   return 0;
 }
 
-// int
-// sys_send(int sender_pid, int rec_pid, void* msg)
-// {
-//   argint(0,&x);
-//   argint(1,&y);
-//   argptr()
-// }
+int
+sys_send(int sender_pid, int rec_pid, void* msg)
+{
+  argint(0,&sender_pid);
+  argint(1,&rec_pid);
+  argptr(2,&msg);
+  
+  cprintf("Message to be sent is -> ");
+
+  char* c;
+  // do unicast communication here, and return 
+  for(c = (char*)msg; c < 8 + (char*)msg ; c++){
+    cprintf("%c", *c);
+  }
+  cprintf("\n");
+
+  return 0;
+}
