@@ -20,6 +20,7 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
-#define SYS_toggle 22
-#define SYS_add    23
-#define SYS_ps     24
+#define SYS_print_count 22
+#define SYS_toggle 23
+#define SYS_add    24
+#define SYS_ps     25

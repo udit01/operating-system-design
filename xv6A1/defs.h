@@ -155,9 +155,11 @@ int             argstr(int, char**);
 int             fetchint(uint, int*);
 int             fetchstr(uint, char**);
 void            syscall(void);
+int            sys_print_count(void);
+int            sys_toggle(void);
 
-extern int      printCall;
-extern int      countCall;
+// extern int      trace;
+// extern int*      countCalls;
 // timer.c
 void            timerinit(void);
 

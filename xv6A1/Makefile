@@ -182,9 +182,12 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_userprog\
+	_user_print_count\
 	_user_toggle\
 	_user_add\
 	_user_ps\
+	# _sender\
+	# _recv\
 	
 
 
@@ -260,6 +263,8 @@ EXTRA=\
 	printf.c umalloc.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
+	user_print_count.c\
+	# sender.c recv.c\
 
 dist:
 	rm -rf dist

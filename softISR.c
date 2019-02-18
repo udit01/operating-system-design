@@ -19,8 +19,10 @@ void main (void)
   b=3; 
   p=NULL;    
 
+  printf("Addr of interrupt handler -> %8.8X \n", &exception_handler);
+
   setjmp(jump_destination); /* ...to this position */
   printf ("Trying to dereference pointer p with value ->  ");
-  printf("%08.8X .\n ", *p);
+  printf("%8.8X .\n ", *p);
   printf ("After dereferencing pointer, its value is: %d\n", *p);
 }

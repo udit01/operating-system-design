@@ -103,6 +103,7 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
+extern int sys_print_count(void);
 extern int sys_toggle(void);
 extern int sys_add(void);
 extern int sys_ps(void);
@@ -129,6 +130,7 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_print_count] sys_print_count,
 [SYS_toggle]  sys_toggle,
 [SYS_add]     sys_add,
 [SYS_ps]      sys_ps,
@@ -156,13 +158,14 @@ static char* syscallnames[] = {
 [SYS_link]    "sys_link",
 [SYS_mkdir]   "sys_mkdir",
 [SYS_close]   "sys_close",  
+[SYS_print_count] "sys_print_count",
 [SYS_toggle]  "sys_toggle",
 [SYS_add]     "sys_add",
 [SYS_ps]      "sys_ps",
 };
 
-int printCall=1;
-int countCall=0;
+int trace=0; // default is trace off
+int countCalls[NELEM(syscalls)] = {0}; // NUM CALLS +1 init to 0
 
 void
 syscall(void)
@@ -172,11 +175,13 @@ syscall(void)
 
   num = curproc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    if (printCall == 1) {
-      cprintf("%s %d\n", syscallnames[num], countCall);
+    // if (printCall == 1) {
+    //   cprintf("%s %d\n", syscallnames[num], countCall);
+    // }
+    if(trace == 1){ // if trace is on
+      countCalls[num]++;
     }
-
-    countCall++;
+    // countCall++;
     // PROBLEM at call 23 because prototype doesn't match..?
     curproc->tf->eax = syscalls[num]();
     // print the system call name and count number of times ? Print all at the end of the process does process call exit at the end?
@@ -190,6 +195,21 @@ syscall(void)
 int 
 sys_toggle(void)
 {
-  printCall = 1 - printCall;
+  trace = 1 - trace;
+  if (trace == 1) {
+    // If transition to trace ON, then re_initilize array
+    int i = 0;
+    for(i = 0 ; i < NELEM(syscalls) ; i++){
+      countCalls[i] = 0;
+    }
+  }
+  return 0;
+}
+int sys_print_count(void){
+
+  int i = 0;
+  for (i = 1; i < NELEM(syscalls) ; i++){
+    cprintf("%s %d\n", syscallnames[i], countCalls[i]);
+  }
   return 0;
 }
