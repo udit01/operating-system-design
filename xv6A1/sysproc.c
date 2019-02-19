@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "spinlock.h"
 
 int
 sys_fork(void)
@@ -114,8 +115,14 @@ struct Message{
 };
 
 
+// struct {
+//   struct spinlock memLock;
+//   // struct Message proc[NPROC];
+//   struct Message messages[NPROC] = {{.from_pid = -1, .to_pid=-1, .content = "       \0"}};
+// } msgq;
+
 struct Message messages[NPROC] = {{.from_pid = -1, .to_pid=-1, .content = "       \0"}};
-struct spinlock lock;
+struct spinlock memLock;
 
 int
 sys_send(int sender_pid, int rec_pid, void* msg)
@@ -129,20 +136,20 @@ sys_send(int sender_pid, int rec_pid, void* msg)
 
   int i = 0;
 
-  acquire(&lock);
+  acquire(&memLock);
   for( i = 0; i < NPROC; i++){
     if (messages[i].from_pid == -1) {
       messages[i].from_pid = sender_pid;
       messages[i].to_pid = rec_pid;
       memmove(messages[i].content, str, MSGSIZE);
-      release(&lock);
+      release(&memLock);
       
       cprintf("(In sys_send system call) Message written in mailbox\n");
       return 0;
     }
   }
 
-  release(&lock);
+  release(&memLock);
   if( i >= NPROC){
     cprintf("(In sys_send system call) Mailbox full or other error\n");
     return -1; // error as i exceeded bounds and couldn't put mem anywhere
@@ -165,9 +172,11 @@ sys_recv(void* msg)
   while(flag == 0){
     for( i = 0; i < NPROC ; i++){
       if(messages[i].to_pid == caller_pid){
-        acquire(&lock);
+        acquire(&memLock);
         memmove(str, messages[i].content, MSGSIZE);
-        release(&lock);
+        //reset the block, because this message has been delivered
+        messages[i].from_pid = -1;
+        release(&memLock);
         flag = 1;
       }
     }
@@ -175,5 +184,43 @@ sys_recv(void* msg)
 
   cprintf("(In sys_recv system call) Message received is -> %s \n", str);
 
+  return 0;
+}
+
+int
+sys_send_multi(int sender_pid, int rec_pids[], void* msg, int num_recivers)
+{
+  char *str ;
+  argint(0, &sender_pid);
+  argint(1, &rec_pids);
+  argptr(2, &str, MSGSIZE);
+  argint(3, &num_recivers);
+  
+  cprintf("(In sys_send_multi system call) Message to be sent is -> %s \n", str);
+
+  int i = 0;
+  int k = 0;
+
+  acquire(&memLock);
+  for( i = 0; i < NPROC; i++){
+    if (messages[i].from_pid == -1) {
+      messages[i].from_pid = sender_pid;
+      messages[i].to_pid = rec_pids[k];
+      memmove(messages[i].content, str, MSGSIZE);
+      k++;
+      release(&memLock);
+      if(k >= num_recivers){
+        return 0;
+      }
+      // cprintf("(In sys_send system call) Message written in mailbox\n");
+    }
+  }
+
+  release(&memLock);
+  if( i >= NPROC){
+    cprintf("(In sys_send system call) Mailbox full or other error\n");
+    return -1; // error as i exceeded bounds and couldn't put mem anywhere
+  }
+  // Shouldn't come here ever
   return 0;
 }
