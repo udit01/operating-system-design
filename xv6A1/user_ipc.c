@@ -22,7 +22,7 @@ int main(void)
 	}else{
 		// This is parent
 		char *msg_child = (char *)malloc(MSGSIZE);
-		msg_child = "P";
+		msg_child = "8bytMsg\0";
 		send(getpid(),cid,msg_child);	
 		printf(1,"1 PARENT: msg sent is: %s \n", msg_child );
 		

@@ -107,22 +107,73 @@ sys_ps(void)
   return 0;
 }
 
+struct Message{
+  int from_pid;
+  int to_pid;
+  char content[MSGSIZE];
+};
+
+
+struct Message messages[NPROC] = {{.from_pid = -1, .to_pid=-1, .content = "       \0"}};
+struct spinlock lock;
+
 int
 sys_send(int sender_pid, int rec_pid, void* msg)
 {
-  // char **msg_ = (char**)msg;
-  argint(0,&sender_pid);
-  argint(1,&rec_pid);
-  argptr(2, msg, 4);
+  char *str ;
+  argint(0, &sender_pid);
+  argint(1, &rec_pid);
+  argptr(2, &str, MSGSIZE);
   
-  cprintf("Message to be sent is -> ");
+  cprintf("(In sys_send system call) Message to be sent is -> %s \n", str);
 
-  char* c;
-  // do unicast communication here, and return 
-  for(c = (char*)msg; c < 8 + (char*)msg ; c++){
-    cprintf("%c", *c);
+  int i = 0;
+
+  acquire(&lock);
+  for( i = 0; i < NPROC; i++){
+    if (messages[i].from_pid == -1) {
+      messages[i].from_pid = sender_pid;
+      messages[i].to_pid = rec_pid;
+      memmove(messages[i].content, str, MSGSIZE);
+      release(&lock);
+      
+      cprintf("(In sys_send system call) Message written in mailbox\n");
+      return 0;
+    }
   }
-  cprintf("\n");
+
+  release(&lock);
+  if( i >= NPROC){
+    cprintf("(In sys_send system call) Mailbox full or other error\n");
+    return -1; // error as i exceeded bounds and couldn't put mem anywhere
+  }
+  // Shouldn't come here ever
+  return 0;
+}
+
+int
+sys_recv(void* msg)
+{
+  char *str;
+  argptr(0, &str, MSGSIZE);
+  
+  int caller_pid = myproc()->pid;
+  int i = 0;
+  int flag = 0;
+
+  // while to block until receive message
+  while(flag == 0){
+    for( i = 0; i < NPROC ; i++){
+      if(messages[i].to_pid == caller_pid){
+        acquire(&lock);
+        memmove(str, messages[i].content, MSGSIZE);
+        release(&lock);
+        flag = 1;
+      }
+    }
+  }
+
+  cprintf("(In sys_recv system call) Message received is -> %s \n", str);
 
   return 0;
 }

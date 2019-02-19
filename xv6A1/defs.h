@@ -1,3 +1,5 @@
+#define MSGSIZE 8 
+
 struct buf;
 struct context;
 struct file;

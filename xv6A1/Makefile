@@ -186,6 +186,7 @@ UPROGS=\
 	_user_toggle\
 	_user_add\
 	_user_ps\
+	_user_ipc\
 	# _sender\
 	# _recv\
 	
@@ -264,6 +265,7 @@ EXTRA=\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 	user_print_count.c\
+	user_ipc.c\
 	# sender.c recv.c\
 
 dist:
