@@ -113,7 +113,7 @@ sys_send(int sender_pid, int rec_pid, void* msg)
   // char **msg_ = (char**)msg;
   argint(0,&sender_pid);
   argint(1,&rec_pid);
-  argptr(2,msg, 4);
+  argptr(2, msg, 4);
   
   cprintf("Message to be sent is -> ");
 
