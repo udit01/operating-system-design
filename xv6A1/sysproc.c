@@ -237,9 +237,14 @@ sig_handler sys_sigset( sig_handler func_ptr) {
   return proc_sigset(func_ptr);
 }
 
+int proc_sigsend(int, int, int);
 // send a singal to the given process
 int sys_sigsend(int to_pid, int value){
-  return 0;
+  argint(0, &to_pid);
+  argint(1, &value);
+  struct proc *currproc = myproc();
+
+  return proc_sigsend(currproc->pid, to_pid, value);
 }
 
 // restore the system registers , to restore the calling context fully

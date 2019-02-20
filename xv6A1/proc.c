@@ -581,3 +581,14 @@ sig_handler proc_sigset(sig_handler sh){
 
   return prev;
 }
+
+int proc_sigsend(int from_pid, int to_pid, int value){
+  //CHECK THAT PROCESS IS ALIVE ?
+  struct proc *dest = &ptable.proc[to_pid];
+  acquire(&ptable.lock);
+  dest->sig_from = from_pid;
+  dest->sig_val = value;
+  dest->sig_done = 0;
+  release(&ptable.lock);
+  return 0;
+}
