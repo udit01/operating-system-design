@@ -187,6 +187,7 @@ UPROGS=\
 	_user_add\
 	_user_ps\
 	_user_ipc\
+	_user_multi\
 	# _sender\
 	# _recv\
 	
@@ -266,6 +267,7 @@ EXTRA=\
 	.gdbinit.tmpl gdbutil\
 	user_print_count.c\
 	user_ipc.c\
+	user_multi.c\
 	# sender.c recv.c\
 
 dist:

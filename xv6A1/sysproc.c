@@ -187,16 +187,17 @@ sys_recv(void* msg)
   return 0;
 }
 
-// int
-// sys_send_multi(int sender_pid, int rec_pids[], void* msg, int num_recivers)
-// {
-//   char *str ;
-//   argint(0, &sender_pid);
-//   argptr(1, &rec_pids, sizeof(int));
-//   argptr(2, &str, MSGSIZE);
-//   argint(3, &num_recivers);
+int
+sys_send_multi(int sender_pid, int rec_pids[], void* msg, int num_recivers)
+{
+  char *str ;
+  char *rec_p;
+  argint(0, &sender_pid);
+  argptr(1, &rec_p, sizeof(int));
+  argptr(2, &str, MSGSIZE);
+  argint(3, &num_recivers);
   
-//   cprintf("(In sys_send_multi system call) Message to be sent is -> %s \n", str);
+  cprintf("(In sys_send_multi system call) Message to be sent is -> %s \n", str);
 
 //   int i = 0;
 //   int k = 0;
@@ -222,8 +223,8 @@ sys_recv(void* msg)
 //     return -1; // error as i exceeded bounds and couldn't put mem anywhere
 //   }
 //   // Shouldn't come here ever
-//   return 0;
-// }
+  return 0;
+}
 
 sig_handler proc_sigset(sig_handler);
 //set the singal handler of a process

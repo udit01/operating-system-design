@@ -29,4 +29,5 @@
 #define SYS_sigset      28
 #define SYS_sigsend     29
 #define SYS_sigret      30
+#define SYS_send_multi  31
 
