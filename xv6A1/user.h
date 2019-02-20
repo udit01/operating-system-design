@@ -1,3 +1,5 @@
+#include "types.h"
+
 struct stat;
 struct rtcdate;
 
@@ -29,6 +31,9 @@ int add(int, int);
 int ps(void);
 int send(int, int, void*);
 int recv(void*);
+sig_handler sigset(sig_handler);
+int sigsend(int, int);
+void sigret(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

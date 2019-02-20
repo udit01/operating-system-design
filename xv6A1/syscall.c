@@ -109,6 +109,9 @@ extern int sys_add(void);
 extern int sys_ps(void);
 extern int sys_send(void);
 extern int sys_recv(void);
+extern int sys_sigset(void);
+extern int sys_sigsend(void);
+extern int sys_sigret(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -138,6 +141,9 @@ static int (*syscalls[])(void) = {
 [SYS_ps]      sys_ps,
 [SYS_send]      sys_send,
 [SYS_recv]      sys_recv,
+[SYS_sigset]      sys_sigset,
+[SYS_sigsend]      sys_sigsend,
+[SYS_sigret]      sys_sigret,
 };
 
 static char* syscallnames[] = {
@@ -168,6 +174,9 @@ static char* syscallnames[] = {
 [SYS_ps]      "sys_ps",
 [SYS_send]      "sys_send",
 [SYS_recv]      "sys_recv",
+[SYS_sigset]      "sys_sigset",
+[SYS_sigsend]      "sys_sigsend",
+[SYS_sigret]      "sys_sigret",
 };
 
 int trace=0; // default is trace off

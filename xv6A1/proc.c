@@ -6,7 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-
+// #include "proc.h"
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -149,7 +149,12 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
-
+  p->handler = (sig_handler)(-1);
+  // struct signal new_sig = {.sender_pid=-1, .value=-1, .processed=1};
+  // p->sg = new_sig;
+  p->sig_from = -1;
+  p->sig_val = -1;
+  p->sig_done = 1;
   release(&ptable.lock);
 }
 
@@ -211,7 +216,14 @@ fork(void)
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
-
+  
+  np->handler = curproc->handler;
+  // struct signal new_sig = {.sender_pid=curproc->sg.sender_pid, .value=-1, .processed=1};
+  // curproc->sg = new_sig;
+  // np->sg = curproc->sg;
+  np->sig_from = -1;
+  np->sig_val = -1;
+  np->sig_done = 1;
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
@@ -557,5 +569,15 @@ list_running(void)
   }
 
   release(&ptable.lock);
+}
 
+sig_handler proc_sigset(sig_handler sh){
+  struct proc *curproc = myproc();
+  sig_handler prev = curproc->handler;
+
+  acquire(&ptable.lock);
+  curproc->handler = sh;
+  release(&ptable.lock);
+
+  return prev;
 }

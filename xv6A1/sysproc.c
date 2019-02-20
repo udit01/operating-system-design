@@ -187,40 +187,67 @@ sys_recv(void* msg)
   return 0;
 }
 
-int
-sys_send_multi(int sender_pid, int rec_pids[], void* msg, int num_recivers)
-{
-  char *str ;
-  argint(0, &sender_pid);
-  argint(1, &rec_pids);
-  argptr(2, &str, MSGSIZE);
-  argint(3, &num_recivers);
+// int
+// sys_send_multi(int sender_pid, int rec_pids[], void* msg, int num_recivers)
+// {
+//   char *str ;
+//   argint(0, &sender_pid);
+//   argptr(1, &rec_pids, sizeof(int));
+//   argptr(2, &str, MSGSIZE);
+//   argint(3, &num_recivers);
   
-  cprintf("(In sys_send_multi system call) Message to be sent is -> %s \n", str);
+//   cprintf("(In sys_send_multi system call) Message to be sent is -> %s \n", str);
 
-  int i = 0;
-  int k = 0;
+//   int i = 0;
+//   int k = 0;
 
-  acquire(&memLock);
-  for( i = 0; i < NPROC; i++){
-    if (messages[i].from_pid == -1) {
-      messages[i].from_pid = sender_pid;
-      messages[i].to_pid = rec_pids[k];
-      memmove(messages[i].content, str, MSGSIZE);
-      k++;
-      release(&memLock);
-      if(k >= num_recivers){
-        return 0;
-      }
-      // cprintf("(In sys_send system call) Message written in mailbox\n");
-    }
-  }
+//   acquire(&memLock);
+//   for( i = 0; i < NPROC; i++){
+//     if (messages[i].from_pid == -1) {
+//       messages[i].from_pid = sender_pid;
+//       messages[i].to_pid = rec_pids[k];
+//       memmove(messages[i].content, str, MSGSIZE);
+//       k++;
+//       release(&memLock);
+//       if(k >= num_recivers){
+//         return 0;
+//       }
+//       // cprintf("(In sys_send system call) Message written in mailbox\n");
+//     }
+//   }
 
-  release(&memLock);
-  if( i >= NPROC){
-    cprintf("(In sys_send system call) Mailbox full or other error\n");
-    return -1; // error as i exceeded bounds and couldn't put mem anywhere
-  }
-  // Shouldn't come here ever
+//   release(&memLock);
+//   if( i >= NPROC){
+//     cprintf("(In sys_send system call) Mailbox full or other error\n");
+//     return -1; // error as i exceeded bounds and couldn't put mem anywhere
+//   }
+//   // Shouldn't come here ever
+//   return 0;
+// }
+
+sig_handler proc_sigset(sig_handler);
+//set the singal handler of a process
+sig_handler sys_sigset( sig_handler func_ptr) {
+  char *ch;
+  argptr(0, &ch, sizeof(sig_handler));
+  func_ptr = (sig_handler) ch;
+  // sig_handler h;
+  // //modify this proces's handler here and return the previous signal handler
+  // return h;
+  return proc_sigset(func_ptr);
+}
+
+// send a singal to the given process
+int sys_sigsend(int to_pid, int value){
   return 0;
 }
+
+// restore the system registers , to restore the calling context fully
+void sys_sigret(void){
+  
+}
+
+// int sys_pause(void){
+//   // How else pausing for interrupt ? 
+//   return 0;
+// }

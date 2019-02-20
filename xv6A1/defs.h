@@ -194,3 +194,9 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+// sysproc.c
+
+sig_handler sigset(sig_handler);
+int sigsend (int, int);
+void sigret (void);

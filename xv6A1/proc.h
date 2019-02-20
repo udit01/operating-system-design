@@ -34,6 +34,12 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+// struct signal{
+//   int sender_pid;
+//   int value;
+//   int processed; // 0 or 1 if processed or not, but will be removed if processed
+// };
+
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -49,6 +55,13 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  sig_handler handler; // to be processed by this handler
+  // struct signal* sg; // current signal to be processed
+  int sig_from;
+  int sig_val;
+  int sig_done;
+  // Add a signal stack etc?
 };
 
 // Process memory is laid out contiguously, low addresses first:
