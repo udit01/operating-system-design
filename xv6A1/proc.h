@@ -58,9 +58,11 @@ struct proc {
 
   sig_handler handler; // to be processed by this handler
   // struct signal* sg; // current signal to be processed
-  int sig_from;
-  int sig_val;
-  int sig_done;
+
+  int dis_sig;
+  struct trapframe *prev_tf;
+  int intr;
+  char message[MSGSIZE];
   // Add a signal stack etc?
 };
 

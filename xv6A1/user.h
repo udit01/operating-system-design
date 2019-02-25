@@ -31,10 +31,10 @@ int add(int, int);
 int ps(void);
 int send(int, int, void*);
 int recv(void*);
+int send_multi(int, int*, void*, int);
 sig_handler sigset(sig_handler);
 int sigsend(int, int);
 void sigret(void);
-int send_multi(int, int*, void*, int);
 
 // ulib.c
 int stat(const char*, struct stat*);

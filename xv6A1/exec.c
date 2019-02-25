@@ -92,19 +92,20 @@ exec(char *path, char **argv)
     if(*s == '/')
       last = s+1;
   safestrcpy(curproc->name, last, sizeof(curproc->name));
-  curproc->handler = (sig_handler)(-1);
-  // struct signal new_sig = {.sender_pid=-1, .value=-1, .processed=1};
-  // curproc->sg = &new_sig;
-  curproc->sig_from = -1;
-  curproc->sig_val = -1;
-  curproc->sig_done = 1;
-
+  
   // Commit to the user image.
   oldpgdir = curproc->pgdir;
   curproc->pgdir = pgdir;
   curproc->sz = sz;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
+  curproc->handler = (sig_handler)(-1);
+  // struct signal new_sig = {.sender_pid=-1, .value=-1, .processed=1};
+  // curproc->sg = &new_sig;
+  *(curproc->message) = -1;
+  curproc->dis_sig = 0;
+  curproc->intr = 0;
+
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;

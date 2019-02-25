@@ -5,6 +5,7 @@ OBJS = \
 	file.o\
 	fs.o\
 	ide.o\
+	invokesigret.o\
 	ioapic.o\
 	kalloc.o\
 	kbd.o\
@@ -186,12 +187,8 @@ UPROGS=\
 	_user_toggle\
 	_user_add\
 	_user_ps\
-	_user_ipc\
 	_user_multi\
-	# _sender\
-	# _recv\
-	
-
+	_user_ipc\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -266,8 +263,8 @@ EXTRA=\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 	user_print_count.c\
-	user_ipc.c\
 	user_multi.c\
+	user_ipc.c\
 	# sender.c recv.c\
 
 dist:

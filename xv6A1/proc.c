@@ -6,7 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-// #include "proc.h"
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -111,6 +111,8 @@ found:
   p->context = (struct context*)sp;
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
+  p->dis_sig = 0;
+  p->handler = (sig_handler)(-1);
 
   return p;
 }
@@ -139,6 +141,11 @@ userinit(void)
   p->tf->esp = PGSIZE;
   p->tf->eip = 0;  // beginning of initcode.S
 
+  p->handler = (sig_handler)(-1);
+  // struct signal new_sig = {.sender_pid=-1, .value=-1, .processed=1};
+  p->dis_sig = 0;
+  p->intr  = 0;
+  *(p->message) = -1;
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
@@ -149,12 +156,7 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
-  p->handler = (sig_handler)(-1);
-  // struct signal new_sig = {.sender_pid=-1, .value=-1, .processed=1};
-  // p->sg = new_sig;
-  p->sig_from = -1;
-  p->sig_val = -1;
-  p->sig_done = 1;
+
   release(&ptable.lock);
 }
 
@@ -205,6 +207,13 @@ fork(void)
   np->parent = curproc;
   *np->tf = *curproc->tf;
 
+  np->handler = curproc->handler;
+  // struct signal new_sig = {.sender_pid=curproc->sg.sender_pid, .value=-1, .processed=1};
+  // curproc->sg = new_sig;
+  // np->sg = curproc->sg;
+  np->dis_sig = 0;
+  np->intr = 0;
+  *(np->message) = -1;
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -217,13 +226,6 @@ fork(void)
 
   pid = np->pid;
   
-  np->handler = curproc->handler;
-  // struct signal new_sig = {.sender_pid=curproc->sg.sender_pid, .value=-1, .processed=1};
-  // curproc->sg = new_sig;
-  // np->sg = curproc->sg;
-  np->sig_from = -1;
-  np->sig_val = -1;
-  np->sig_done = 1;
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
@@ -582,13 +584,51 @@ sig_handler proc_sigset(sig_handler sh){
   return prev;
 }
 
-int proc_sigsend(int from_pid, int to_pid, int value){
+int proc_sigsend(int from_pid, int to_pid, char* msg_){
   //CHECK THAT PROCESS IS ALIVE ?
   struct proc *dest = &ptable.proc[to_pid];
   acquire(&ptable.lock);
-  dest->sig_from = from_pid;
-  dest->sig_val = value;
-  dest->sig_done = 0;
+  dest->intr = 1;
+  memmove(dest->message, msg_, MSGSIZE);
   release(&ptable.lock);
   return 0;
+}
+
+void checkSignals(struct trapframe *tf)
+{ 
+  if((tf->cs & 3) != DPL_USER)
+    return;
+  struct proc *p = myproc();
+  acquire(&ptable.lock);
+  if(p == 0 || p->dis_sig == 1 || p->handler == (sig_handler)(-1)){
+    release(&ptable.lock);
+    return;
+  }
+  if (*p->msg == -1 || p->intr != 1){
+    release(&ptable.lock);
+    return;
+  }
+  p->dis_sig = 1; // Stop further signals
+  p->intr = 0;
+  memmove(p->prev_tf, p->tf, sizeof(struct trapframe));
+  p->tf->esp -= (uint)&invoke_sigret_end - (uint)&invoke_sigret_start;
+  memmove((void*)p->tf->esp, invoke_sigret_start, (uint)&invoke_sigret_end - (uint)&invoke_sigret_start);
+  // int temp = myAtoi(p->msg);
+  // cprintf("Printing check signal %d\n", temp); // BAD WAY OF DOING THIS
+  memmove(((char*)(p->tf->esp - 4)), p->message, MSGSIZE);
+
+  *((int*)(p->tf->esp - 8)) = p->tf->esp; // sigret system call code address
+  p->tf->esp -= 8;
+  p->tf->eip = (uint)p->handler; // trapret will resume into signal handler
+  *p->message = -1;
+  release(&ptable.lock);
+}
+
+void 
+proc_sigret(void)
+{
+  struct proc* p = myproc();
+  memmove(p->tf, p->prev_tf, sizeof(struct trapframe));
+  p->dis_sig = 0;
+  // p->intr = 0;
 }

@@ -229,13 +229,13 @@ sys_send_multi(int sender_pid, int rec_pids[], void* msg, int num_recivers)
 sig_handler proc_sigset(sig_handler);
 //set the singal handler of a process
 sig_handler sys_sigset( sig_handler func_ptr) {
-  char *ch;
-  argptr(0, &ch, sizeof(sig_handler));
-  func_ptr = (sig_handler) ch;
+  int addr;
+  argint(0, &addr);
+  // func_ptr = (sig_handler) addr;
   // sig_handler h;
   // //modify this proces's handler here and return the previous signal handler
   // return h;
-  return proc_sigset(func_ptr);
+  return proc_sigset((sig_handler) addr);
 }
 
 int proc_sigsend(int, int, int);
@@ -250,7 +250,7 @@ int sys_sigsend(int to_pid, int value){
 
 // restore the system registers , to restore the calling context fully
 void sys_sigret(void){
-  
+  proc_sigret();
 }
 
 // int sys_pause(void){

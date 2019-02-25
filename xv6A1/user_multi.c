@@ -5,18 +5,20 @@
 #define MSGSIZE 8
 
 char* message ;
+// int sys_send_multi(int, int*, void*, int);
 
 void interrupt_handler(int from_pid, int value){
     printf(1, "Inside process = %d, Interrupted by = %d, with value = %d. \n", getpid(), from_pid, value);
     
     //copy message from where?
     // Pull out message from stack or something ?
-    // memmove(message, , MSGSIZE);
+    memmove(message, , MSGSIZE);
     
 }
 
 int main(void)
 {
+    char * message;
 	printf(1,"IPC Test case for multiple send & receive by the interrupt handling model.\n");
 	
     sigset( interrupt_handler );
@@ -43,9 +45,10 @@ int main(void)
             //send messages here
             char *msg_to_send = (char *)malloc(MSGSIZE);
 		    msg_to_send = "MultMsg\0";
-            send_multi(getpid(), recvs, msg_to_send, 2);
+            printf(1,"In parent, msg to send : %s", msg_to_send);
+            send_multi(getpid(), (int*)recvs, (void*)msg_to_send, 2);
+            
             wait(); // wait for all children to exit?or 1 child to exit ?
-
         }
     }
 

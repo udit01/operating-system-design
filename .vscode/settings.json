@@ -9,6 +9,7 @@
         "param.h": "c",
         "defs.h": "c",
         "x86.h": "c",
-        "traps.h": "c"
+        "traps.h": "c",
+        "stat.h": "c"
     }
 }
