@@ -153,7 +153,7 @@ sys_send(int sender_pid, int rec_pid, void* msg)
   argint(1, &rec_pid);
   argptr(2, &str, MSGSIZE);
   
-  cprintf("(In sys_send system call) Message to be sent is -> %s \n", str);
+  // cprintf("(In sys_send system call) Message to be sent is -> %s \n", str);
 
   int i = 0;
 
@@ -258,7 +258,7 @@ sys_send_multi(int sender_pid, int rec_pids[], void* msg, int num_recivers)
   argptr(2, &str, MSGSIZE);
   argint(3, &num_recivers);
   
-  cprintf("(In sys_send_multi system call) Message to be sent is -> %d \n", str);
+  // cprintf("(In sys_send_multi system call) Message to be sent is -> %d \n", str);
 
   int caller_pid = myproc()->pid;
 

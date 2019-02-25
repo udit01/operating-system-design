@@ -227,7 +227,9 @@ int sys_print_count(void){
 
   int i = 0;
   for (i = 1; i < NELEM(syscalls) ; i++){
-    cprintf("%s %d\n", syscallnames[i], countCalls[i]);
+    if(countCalls[i] > 0){
+      cprintf("%s %d\n", syscallnames[i], countCalls[i]);
+    }
   }
   return 0;
 }

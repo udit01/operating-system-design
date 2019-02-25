@@ -198,8 +198,8 @@ UPROGS=\
 	_assig1_7\
 	_assig1_8\
 
-fs.img: mkfs README $(UPROGS)
-	./mkfs fs.img README $(UPROGS)
+fs.img: mkfs README arr $(UPROGS)
+	./mkfs fs.img README arr $(UPROGS)
 
 -include *.d
 
@@ -274,7 +274,6 @@ EXTRA=\
 	user_multi.c\
 	user_ipc.c\
 	assig1_1.c assig1_2.c assig1_3.c assig1_4.c assig1_5.c assig1_6.c assig1_7.c assig1_8.c\
-	# sender.c recv.c\
 
 dist:
 	rm -rf dist
