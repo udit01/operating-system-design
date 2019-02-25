@@ -24,7 +24,7 @@ alltraps:
 .globl trapret
 trapret: # CHANGES IN NEXT 3 lines
   pushl %esp
-  call checkSigs
+  call checkTraps
   addl $4, %esp
   popal
   popl %gs

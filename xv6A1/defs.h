@@ -200,8 +200,8 @@ void            clearpteu(pde_t *pgdir, char *uva);
 sig_handler sigset(sig_handler);
 int sigsend (int, int);
 void sigret (void);
-int send_multi(int, int*, void*, int);
+// int send_multi(int, int*, void*, int);
 
-# invokeSigret.s
+// # invokeSigret.s
 void invoke_sigret_start(void);
 void invoke_sigret_end(void);

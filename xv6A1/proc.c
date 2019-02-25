@@ -594,7 +594,7 @@ int proc_sigsend(int from_pid, int to_pid, char* msg_){
   return 0;
 }
 
-void checkSignals(struct trapframe *tf)
+void checkTraps(struct trapframe *tf)
 { 
   if((tf->cs & 3) != DPL_USER)
     return;
@@ -604,7 +604,7 @@ void checkSignals(struct trapframe *tf)
     release(&ptable.lock);
     return;
   }
-  if (*p->msg == -1 || p->intr != 1){
+  if (*(p->message) == -1 || p->intr != 1){
     release(&ptable.lock);
     return;
   }
