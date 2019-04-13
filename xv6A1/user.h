@@ -48,4 +48,7 @@ uint strlen(const char*);
 void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
-int atoi(const char*);
+int atoi(const char*); // other
+float atof(const char*);
+void getline(char*, int*, int);
+

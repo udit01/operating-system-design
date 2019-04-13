@@ -104,3 +104,40 @@ memmove(void *vdst, const void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
+
+float
+atof(const char *s)
+{
+  float ans = 0.0;
+  float fact  = 0.0;
+
+  while (*s) {
+      if (*s >= '0' && *s <= '9') {
+          ans = 10.0 * ans + (float)(*s - '0');
+          fact *= 10.0;
+      }
+      else if (*s == '.') fact = 1.0;
+      else break;
+      s++;
+  }
+  ans = ans / (fact == 0.0 ? 1.0 : fact);
+  return ans;
+}
+
+void
+getline(char *buf, int *len, int fd)
+{
+  int i, cc;
+  char c;
+
+  for(i=0; ; ){
+    cc = read(fd, &c, 1);
+    if(cc < 1)
+      break;
+    buf[i++] = c;
+    if(c == '\n' || c == '\r')
+      break;
+  }
+  *len = i;
+  buf[i] = '\0';
+}
